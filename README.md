@@ -1,4 +1,4 @@
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/fxrobin/openapi-custom-checker)
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/fxrobin/openapi-custom-checker) ![Java CI with Maven](https://github.com/fxrobin/openapi-custom-checker/workflows/Java%20CI%20with%20Maven/badge.svg)
 
 # openapi-custom-checker
 
