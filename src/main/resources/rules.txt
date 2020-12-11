@@ -1,0 +1,13 @@
+# Syntaxe à définir !
+
+
+???
+
+KEY_MUST_EXIST "/swagger" OR "/openapi"
+KEY_MUST_EXIST "/paths"
+KEYS_IN "/paths" MUST_MATCH "<regexp>"
+
+
+KEY_MUST_EXIST "get" or "post" IN "/paths/*"
+
+???
