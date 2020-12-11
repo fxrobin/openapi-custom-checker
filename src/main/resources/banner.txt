@@ -1,0 +1,2 @@
+OpenApi Custom Checker - https://www.fxjavadevblog.fr 
+-- v1.0
