@@ -9,69 +9,62 @@ import static picocli.CommandLine.Command;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.yaml.snakeyaml.Yaml;
 
+
+@SuppressWarnings("unused")
 @TopCommand
 @Command(mixinStandardHelpOptions = true, version = "1.0.0")
 
 @Slf4j
 public class ApplicationCommand implements Runnable {
-	
-	
+
 	@Parameters(paramLabel = "FILE(s)", description = "YAML OpenAPI file(s)")
 	File[] inputFiles;
-	
-    @Override
-    public void run() {
-        Stream.of(inputFiles).forEach(this::analyse);
-    }
+
+	@Override
+	public void run() {
+		Stream.of(inputFiles).forEach(this::analyse);
+	}
 
 	private void analyse(File file) {
 		
 		try {
-			Map <String, Object> yaml = new Yaml().load(new FileInputStream(file));
-			System.out.printf("Checking file : %s%n", file.getAbsolutePath());
-			this.prettyPrint(yaml,0);			
+			
+			Map <String, Object> yaml = new Yaml().load(new FileInputStream(file));		
+			log.info("Checking file : {}", file.getAbsolutePath());		
+			JSONObject json = new JSONObject(yaml);		
+			log.info(json.toString());
+			
+			// TODO : mettre les regexp dans un fichier PROPERTIES
+			// TODO : mettre les JSONPath = REGEXP_REF dans un fichier de Properties
+			// TODO : les parcourir, les matcher.
+			// TODO : Happy Face.
+			
 		} catch (FileNotFoundException e) {
 			log.error("File not found : " + file.getAbsolutePath());
-		}
-		
-	}
+		} 
 
-	private String generateSpace(int level)
-	{
-		char[] padding = new char[level * 4];
-		for(int i = 0; i < padding.length ; i++) padding[i] = ' ';
-		return new String(padding);
-	}
-	
-	private void prettyPrint(Map<?, ?> yaml, int level) {
-		
-		yaml.entrySet().forEach(
-				
-				e -> {
-					String padding = this.generateSpace(level);
-					String content = padding + "- " + e.getKey() + " : ";
-					if (e.getValue() instanceof Map)
-					{
-						log.info(content);
-					
-						@SuppressWarnings({ "unchecked", "rawtypes" })
-						Map map = (Map) (Map <String, Object>) e.getValue();
-						prettyPrint(map, level + 1);
-					}
-					else
-					{
-						content += e.getValue();
-						log.info(content);
-					}
-				}
-				
-			);
-	
 		
 	}
 }

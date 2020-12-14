@@ -56,6 +56,19 @@
 			<version>1.18.16</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20201115</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>2.5.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -65,7 +78,7 @@
 				<version>${quarkus-plugin.version}</version>
 				<executions>
 					<execution>
-						<goals>				
+						<goals>
 							<goal>build</goal>
 						</goals>
 					</execution>
