@@ -31,6 +31,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.yaml.snakeyaml.Yaml;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+
 
 @SuppressWarnings("unused")
 @TopCommand
@@ -55,6 +58,13 @@ public class ApplicationCommand implements Runnable {
 			log.info("Checking file : {}", file.getAbsolutePath());		
 			JSONObject json = new JSONObject(yaml);		
 			log.info(json.toString());
+			
+			
+			DocumentContext documentContext = JsonPath.parse(json.toString());
+			
+			// this works!
+			log.info("Test v1 {}", documentContext.read("$.basePath").equals("/v1"));
+			
 			
 			// TODO : mettre les regexp dans un fichier PROPERTIES
 			// TODO : mettre les JSONPath = REGEXP_REF dans un fichier de Properties

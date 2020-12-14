@@ -11,7 +11,8 @@ schemes:
 consumes:
   - application/json
 produces:
-  - application/json
+  - application/json: v1
+  - application/yaml: v2
 paths:
   /pets:
     get:
