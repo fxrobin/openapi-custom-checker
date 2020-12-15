@@ -1,0 +1,41 @@
+RegExp:
+   URI_REGEXP: "^babababab"
+   VERSION_REGEXP: "^skdslkd"
+   OBJECT_REGEXP: "^slkdslkdsl"
+   MAIL_GMAIL: "^jfdkjdkfjdk" 
+  
+Rules:
+
+   PATH_PATTERN:
+      description: Path must respect URL rules.
+      criticity: SEVERE
+      json-path: $.paths 
+      type: KEY_CHECK
+      regexp: $.RegExp.URI_REGEXP
+      
+   EMAIL_INTRADEF:
+      description: Contact mail must me in intradef.
+      criticity: SEVERE
+      json-path: $.info.contact.email
+      type: VALUE_CHECK
+      regexp: $.RegExp.MAIL_GMAIL
+                
+   VERSION_IN_PATH:
+      description: URI must contain /v1.0 max
+      criticity: SEVERE
+      type: ALTERNATIVES
+      checks:   
+         VERSION_BASE_PATH:
+              description: basePath contains /v1 or more
+              json-path: $.basePath
+              type: VALUE_CHECK
+              regexp: $.RegExp.VERSION_REGEXP
+             
+         PATHS_WITH_VERSION:   
+              description: Path includes /v1 or more
+              criticity: SEVERE
+              json-path: $.paths
+              type: KEY_CHECK
+              regexp: $.RegExp.ANOTHER_REGEXP
+        
+

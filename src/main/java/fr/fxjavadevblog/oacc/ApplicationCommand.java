@@ -2,6 +2,7 @@ package fr.fxjavadevblog.oacc;
 
 import io.quarkus.picocli.runtime.annotations.TopCommand;
 import lombok.extern.slf4j.Slf4j;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import static picocli.CommandLine.Command;
@@ -34,7 +35,6 @@ import org.yaml.snakeyaml.Yaml;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
-
 @SuppressWarnings("unused")
 @TopCommand
 @Command(mixinStandardHelpOptions = true, version = "1.0.0")
@@ -45,36 +45,47 @@ public class ApplicationCommand implements Runnable {
 	@Parameters(paramLabel = "FILE(s)", description = "YAML OpenAPI file(s)")
 	File[] inputFiles;
 
+	@Option(names = { "-r", "--rules" }, paramLabel = "RULE FILE", description = "Rule file", required = true)
+	File ruleFile;
+
+	private DocumentContext rulesDefinitions;
+
 	@Override
 	public void run() {
-		Stream.of(inputFiles).forEach(this::analyse);
+
+		try {
+			this.loadRules();
+			this.analyseFiles();
+		} catch (FileNotFoundException e) {
+			log.error(e.getMessage());
+		}
+
 	}
 
-	private void analyse(File file) {
-		
-		try {
-			
-			Map <String, Object> yaml = new Yaml().load(new FileInputStream(file));		
-			log.info("Checking file : {}", file.getAbsolutePath());		
-			JSONObject json = new JSONObject(yaml);		
-			log.info(json.toString());
-			
-			
-			DocumentContext documentContext = JsonPath.parse(json.toString());
-			
-			// this works!
-			log.info("Test v1 {}", documentContext.read("$.basePath").equals("/v1"));
-			
-			
-			// TODO : mettre les regexp dans un fichier PROPERTIES
-			// TODO : mettre les JSONPath = REGEXP_REF dans un fichier de Properties
-			// TODO : les parcourir, les matcher.
-			// TODO : Happy Face.
-			
-		} catch (FileNotFoundException e) {
-			log.error("File not found : " + file.getAbsolutePath());
-		} 
+	private void loadRules() throws FileNotFoundException {
+		Map<String, Object> yaml = new Yaml().load(new FileInputStream(ruleFile));
+		log.info("Loading rule file : {}", ruleFile.getAbsolutePath());
+		JSONObject json = new JSONObject(yaml);
+		rulesDefinitions = JsonPath.parse(json.toString());
+	}
 
+	private void analyseFiles() throws FileNotFoundException {
+		for (File inputFile : inputFiles) {
+			this.analyse(inputFile);
+		}
+
+	}
+
+	private void analyse(File file) throws FileNotFoundException {
+
+		Map<String, Object> yaml = new Yaml().load(new FileInputStream(file));
+		log.info("Checking file : {}", file.getAbsolutePath());
+		JSONObject json = new JSONObject(yaml);
+		DocumentContext documentContext = JsonPath.parse(json.toString());
+
+		Map<String, Object> rules = rulesDefinitions.read("$.Rules");
+		rules.forEach((k, v) -> log.info("RULE {}", k));
 		
+
 	}
 }
